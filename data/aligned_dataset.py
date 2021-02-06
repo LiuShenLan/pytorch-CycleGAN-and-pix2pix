@@ -3,6 +3,9 @@ from data.base_dataset import BaseDataset, get_params, get_transform
 from data.image_folder import make_dataset
 from PIL import Image
 
+import torch
+from torchvision import transforms
+
 
 class AlignedDataset(BaseDataset):
     """A dataset class for paired image dataset.
@@ -18,11 +21,11 @@ class AlignedDataset(BaseDataset):
             opt (Option class) -- stores all the experiment flags; needs to be a subclass of BaseOptions
         """
         BaseDataset.__init__(self, opt)
-        self.dir_AB = os.path.join(opt.dataroot, opt.phase)  # get the image directory
-        self.AB_paths = sorted(make_dataset(self.dir_AB, opt.max_dataset_size))  # get image paths
+        self.dir_AB = os.path.join(opt.dataroot, opt.phase)  # get the image directory  './datasets/facades/train'
+        self.AB_paths = sorted(make_dataset(self.dir_AB, opt.max_dataset_size))  # get image paths  返回给定文件夹中所有图像文件的路径组成的list并排序
         assert(self.opt.load_size >= self.opt.crop_size)   # crop_size should be smaller than the size of loaded image
-        self.input_nc = self.opt.output_nc if self.opt.direction == 'BtoA' else self.opt.input_nc
-        self.output_nc = self.opt.input_nc if self.opt.direction == 'BtoA' else self.opt.output_nc
+        self.input_nc = self.opt.output_nc if self.opt.direction == 'BtoA' else self.opt.input_nc   # 3
+        self.output_nc = self.opt.input_nc if self.opt.direction == 'BtoA' else self.opt.output_nc  # 3
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -31,14 +34,15 @@ class AlignedDataset(BaseDataset):
             index - - a random integer for data indexing
 
         Returns a dictionary that contains A, B, A_paths and B_paths
-            A (tensor) - - an image in the input domain
-            B (tensor) - - its corresponding image in the target domain
-            A_paths (str) - - image paths
-            B_paths (str) - - image paths (same as A_paths)
+            A (tensor) - - an image in the input domain 输入域中的图像
+            B (tensor) - - its corresponding image in the target domain 其在目标域中的对应图像
+            A_paths (str) - - image paths   图像路径
+            B_paths (str) - - image paths (same as A_paths) 与A相同的图像路径
         """
         # read a image given a random integer index
         AB_path = self.AB_paths[index]
         AB = Image.open(AB_path).convert('RGB')
+
         # split AB image into A and B
         w, h = AB.size
         w2 = int(w / 2)
@@ -55,6 +59,25 @@ class AlignedDataset(BaseDataset):
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
 
+        """
+
+        # apply the same transform to both A and B
+        transform_params = get_params(self.opt, AB.size)
+        A_transform = get_transform(self.opt, transform_params, grayscale=(self.input_nc == 1))
+
+        A = A_transform(AB)
+
+        c,w, h = A.shape
+        imgBlack = self.createBlackImg(c, w, h)
+        # x1,x2,y1,y2
+        return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
+        """
+
     def __len__(self):
         """Return the total number of images in the dataset."""
         return len(self.AB_paths)
+
+    # 生成空白黑色图片
+    def createBlackImg(self, c, w, h):
+        img = torch.zeros([c, w, h])
+        return img

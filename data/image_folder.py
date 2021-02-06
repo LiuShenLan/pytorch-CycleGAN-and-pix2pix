@@ -15,12 +15,17 @@ IMG_EXTENSIONS = [
     '.tif', '.TIF', '.tiff', '.TIFF',
 ]
 
-
+"""
+确定给定文件是否为图像
+"""
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
-
+"""
+返回给定文件夹中所有图像文件的路径组成的list
+"""
 def make_dataset(dir, max_dataset_size=float("inf")):
+    # dir = './datasets/facades/train'  max_dataset_size = inf
     images = []
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 

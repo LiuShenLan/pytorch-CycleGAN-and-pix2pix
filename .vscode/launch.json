@@ -1,0 +1,47 @@
+{
+    // 使用 IntelliSense 了解相关属性。
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "train",
+            "type": "python",
+            "request": "launch",
+            "program": "./train.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataroot", "./datasets/facades",
+                "--name", "facades_pix2pix",
+                "--model", "pix2pix",
+                "--direction", "BtoA",
+            ]
+        },
+        {
+            "name": "test",
+            "type": "python",
+            "request": "launch",
+            "program": "./test.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataroot", "./datasets/facades",
+                "--name", "facades_pix2pix",
+                "--model", "pix2pix",
+                "--direction", "BtoA",
+            ]
+        },
+        {
+            "name": "test pre-trained model",
+            "type": "python",
+            "request": "launch",
+            "program": "./test.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataroot", "./datasets/facades/",
+                "--direction", "BtoA",
+                "--model", "pix2pix",
+                "--name", "facades_label2photo_pretrained"
+            ]
+        }
+    ]
+}

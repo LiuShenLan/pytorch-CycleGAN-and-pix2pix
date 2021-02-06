@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "/home/lsl/tool/anaconda3/envs/pytorch-CycleGAN-and-pix2pix/bin/python",
+    "files.associations": {
+        "stdio.h": "c",
+        "inttypes.h": "c"
+    }
+}
